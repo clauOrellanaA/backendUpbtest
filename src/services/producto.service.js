@@ -9,6 +9,13 @@ const validarId = (id) => {
 
 const listar = () => productoRepository.findAll();
 
+const buscarPorNombre = (nombre) => {
+    if (typeof nombre !== 'string' || !nombre.trim() || nombre.trim().length > 100) {
+        throw new HttpError(400, 'nombre debe ser un texto de entre 1 y 100 caracteres');
+    }
+    return productoRepository.findByNombre(nombre.trim());
+};
+
 const obtenerPorId = async (id) => {
     const producto = await productoRepository.findById(validarId(id));
     if (!producto) throw new HttpError(404, 'Producto no encontrado');
@@ -32,4 +39,4 @@ const eliminar = async (id) => {
     if (!eliminado) throw new HttpError(404, 'Producto no encontrado');
 };
 
-module.exports = { listar, obtenerPorId, crear, actualizar, eliminar };
+module.exports = { listar, buscarPorNombre, obtenerPorId, crear, actualizar, eliminar };

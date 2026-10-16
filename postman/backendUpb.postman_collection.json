@@ -1,0 +1,106 @@
+{
+  "info": {
+    "name": "backendUpb - Productos",
+    "description": "CRUD de productos (Express + PostgreSQL) desplegado en Render.\n\nCambia la variable `baseUrl` para usar local o producción.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000", "description": "Backend local conectado a PostgreSQL en Render" },
+    { "key": "localUrl", "value": "http://localhost:3000", "description": "Local: copia este valor en baseUrl para probar en tu PC" },
+    { "key": "id", "value": "2", "description": "Id del producto a consultar, actualizar o eliminar" }
+  ],
+  "item": [
+    {
+      "name": "Health check",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/", "host": ["{{baseUrl}}"], "path": [""] }
+      }
+    },
+    {
+      "name": "Listar productos",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/api/productos", "host": ["{{baseUrl}}"], "path": ["api", "productos"] }
+      }
+    },
+    {
+      "name": "Buscar productos por nombre",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/productos/buscar?nombre=prueba",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "productos", "buscar"],
+          "query": [{ "key": "nombre", "value": "prueba", "description": "Texto a buscar (no distingue mayúsculas)" }]
+        }
+      }
+    },
+    {
+      "name": "Obtener producto por id",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/api/productos/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "productos", "{{id}}"] }
+      }
+    },
+    {
+      "name": "Crear producto",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code === 201) {",
+              "    pm.collectionVariables.set('id', pm.response.json().id);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"nombre\": \"Laptop\",\n    \"precio\": 1500,\n    \"stock\": 5\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": { "raw": "{{baseUrl}}/api/productos", "host": ["{{baseUrl}}"], "path": ["api", "productos"] }
+      }
+    },
+    {
+      "name": "Actualizar producto",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"precio\": 1350,\n    \"stock\": 10\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": { "raw": "{{baseUrl}}/api/productos/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "productos", "{{id}}"] }
+      }
+    },
+    {
+      "name": "Eliminar producto",
+      "request": {
+        "method": "DELETE",
+        "url": { "raw": "{{baseUrl}}/api/productos/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "productos", "{{id}}"] }
+      }
+    },
+    {
+      "name": "Crear producto inválido (400)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"precio\": -10\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": { "raw": "{{baseUrl}}/api/productos", "host": ["{{baseUrl}}"], "path": ["api", "productos"] }
+      }
+    }
+  ]
+}
