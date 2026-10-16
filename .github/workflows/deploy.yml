@@ -24,4 +24,15 @@ jobs:
         run: find src -name "*.js" -exec node --check {} \;
 
       - name: Desplegar en Render
-        run: curl -fsS -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [[ -z "$RENDER_DEPLOY_HOOK_URL" ]]; then
+            echo "::error::Falta el secret RENDER_DEPLOY_HOOK_URL. Configuralo en Settings > Environments > dev > Environment secrets, o en los secrets del repositorio."
+            exit 1
+          fi
+          if [[ ! "$RENDER_DEPLOY_HOOK_URL" =~ ^https://api\.render\.com/deploy/srv-[^[:space:]?]+\?key=[^[:space:]]+$ ]]; then
+            echo "::error::RENDER_DEPLOY_HOOK_URL no es un Deploy Hook valido. Copia el Deploy Hook del Web Service de Render; no uses la URL de PostgreSQL ni la URL publica de la API."
+            exit 1
+          fi
+          curl --fail --silent --show-error --request POST "$RENDER_DEPLOY_HOOK_URL"
