@@ -2,7 +2,7 @@ name: Deploy a Render
 
 on:
   push:
-    branches: [dev]
+    branches: [main]
 
 jobs:
   deploy:
@@ -18,7 +18,7 @@ jobs:
           node-version: 22
 
       - name: Instalar dependencias
-        run: npm ci
+        run: npm install
 
       - name: Verificar sintaxis
         run: find src -name "*.js" -exec node --check {} \;
